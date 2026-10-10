@@ -5,3 +5,5 @@ venv/
 *.sqlite3
 build/
 .dart_tool/
+.env
+

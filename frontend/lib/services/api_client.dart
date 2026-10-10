@@ -18,7 +18,7 @@ class ApiException implements Exception {
 
 /// Thin JSON-over-HTTP client for the TripSplit Flask API.
 class ApiClient {
-  ApiClient({this.baseUrl = AppConfig.baseUrl});
+  ApiClient({String? baseUrl}) : baseUrl = baseUrl ?? AppConfig.baseUrl;
 
   final String baseUrl;
   String? token;
