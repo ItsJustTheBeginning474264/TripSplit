@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../config.dart';
 import '../services/auth_provider.dart';
 import '../utils/validators.dart';
 import '../widgets/common.dart';
@@ -42,6 +43,51 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) showError(context, e);
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _showServerSettings() async {
+    final controller = TextEditingController(text: AppConfig.baseUrl);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Backend Server URL'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Enter the address where the Flask API is running (e.g. your PC LAN IP on port 5000):',
+              style: TextStyle(fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: 'Server URL',
+                hintText: 'http://192.168.78.102:5000',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              controller.text = '';
+              Navigator.pop(ctx, true);
+            },
+            child: const Text('Reset Default'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) {
+      await AppConfig.setCustomUrl(controller.text);
+      setState(() {});
     }
   }
 
@@ -105,6 +151,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           : () => Navigator.of(context)
                               .push(MaterialPageRoute(builder: (_) => const RegisterScreen())),
                       child: const Text("Don't have an account? Register"),
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton.icon(
+                      onPressed: _showServerSettings,
+                      icon: const Icon(Icons.dns_outlined, size: 16),
+                      label: Text(
+                        'Server: ${AppConfig.baseUrl}',
+                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      ),
                     ),
                   ],
                 ),

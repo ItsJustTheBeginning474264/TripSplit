@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'config.dart';
 import 'screens/login_screen.dart';
 import 'screens/splash_screen.dart';
 import 'services/api_client.dart';
@@ -8,7 +9,9 @@ import 'services/auth_provider.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppConfig.loadCustomUrl();
   final api = ApiClient();
   final auth = AuthProvider(api: api);
 
